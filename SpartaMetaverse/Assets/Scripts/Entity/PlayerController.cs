@@ -16,6 +16,8 @@ public class PlayerController : BaseController
 
     protected override void HandleAction()
     {
+        base.HandleAction(); //추가
+
         // 키보드 입력으로 이동 방향 설정
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D 또는 방향키 좌우
         float vertical = Input.GetAxisRaw("Vertical");     // W/S 또는 방향키 상하

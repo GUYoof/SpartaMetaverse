@@ -36,28 +36,6 @@ public class BaseController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         animationHandler = GetComponent<AnimationHandler>();
         statHandler = GetComponent<StatHandler>();
-
-        // Debugging: null 체크
-        if (_rigidbody == null) Debug.LogError("Rigidbody2D is not assigned!");
-        if (animationHandler == null) Debug.LogError("AnimationHandler is not assigned!");
-        if (statHandler == null) Debug.LogError("StatHandler is not assigned!");
-        if (rangeWeaponHandler == null) Debug.LogWarning("RangeWeaponHandler is not assigned!");
-
-        // 무기 핸들러를 프리팹에서 생성하거나 자식 오브젝트에서 찾음
-        if (WeaponPrefab != null)
-        {
-            weaponHandler = Instantiate(WeaponPrefab, weaponPivot.position, Quaternion.identity);
-            weaponHandler.transform.SetParent(weaponPivot);  // 부모 설정
-            weaponHandler.gameObject.SetActive(true);  // 게임 오브젝트 활성화
-            Debug.Log(" WeaponPrefab instantiated.");
-        }
-        else
-        {
-            Debug.LogError("WeaponPrefab is not assigned!");
-            weaponHandler = GetComponentInChildren<WeaponHandler>();  // 자식에서 무기 찾기
-        }
-
-        Debug.Log($"Awake: Initial timeSinceLastAttack={timeSinceLastAttack}");
     }
 
     // 기본 Start 메서드. 필요한 경우 상속해서 사용
@@ -150,4 +128,38 @@ public class BaseController : MonoBehaviour
             weaponHandler?.Attack();
         }
     }
+
+    // Trigger 영역에 들어갔을 때 호출
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("BattleArea"))
+        {
+            if (weaponHandler == null)
+            {
+                if (WeaponPrefab != null)
+                {
+                    weaponHandler = Instantiate(WeaponPrefab, weaponPivot.position, Quaternion.identity);
+                    weaponHandler.transform.SetParent(weaponPivot);  // 부모 설정
+                    weaponHandler.gameObject.SetActive(true);        // 게임 오브젝트 활성화
+                }
+                else
+                {
+                    weaponHandler = GetComponentInChildren<WeaponHandler>();
+                }
+            }
+        }
+    }
+    // Trigger 영역에 나갔을 때 삭제
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("BattleArea"))
+        {
+            if (weaponHandler != null)
+            {
+                Destroy(weaponHandler.gameObject);  // 무기 오브젝트 삭제
+                weaponHandler = null;               // 레퍼런스 초기화
+            }
+        }
+    }
+
 }

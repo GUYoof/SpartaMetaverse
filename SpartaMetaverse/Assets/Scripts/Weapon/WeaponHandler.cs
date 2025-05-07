@@ -16,6 +16,7 @@ public class WeaponHandler : MonoBehaviour
     [SerializeField] private bool isOnKnockback = false; // 넉백 여부
     [SerializeField] private float knockbackPower = 1f; // 넉백의 힘
     [SerializeField] private float knockbackTime = 1f; // 넉백 지속 시간
+    [SerializeField] private BaseController controller;
 
     // Properties
     public float Delay => delay;
@@ -41,7 +42,6 @@ public class WeaponHandler : MonoBehaviour
     // 초기화 메서드 (Awake)
     protected virtual void Awake()
     {
-        Controller = GetComponentInParent<BaseController>();  // 부모 객체의 BaseController 컴포넌트 가져오기
         animator = GetComponentInChildren<Animator>();  // 자식 객체의 Animator 컴포넌트 가져오기
         weaponRenderer = GetComponentInChildren<SpriteRenderer>();  // 자식 객체의 SpriteRenderer 컴포넌트 가져오기
 
@@ -50,7 +50,7 @@ public class WeaponHandler : MonoBehaviour
 
     protected virtual void Start()
     {
-
+        Controller = GetComponentInParent<BaseController>();  // 부모 객체의 BaseController 컴포넌트 가져오기
     }
 
     // 애니메이터 설정 메서드
